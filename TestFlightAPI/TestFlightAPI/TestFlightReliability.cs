@@ -28,7 +28,7 @@ namespace TestFlightAPI
                 // Verify we have a valid core attached
                 if (core == null)
                     return false;
-                Log("TestFlightEnabled");
+              //  Log("TestFlightEnabled");
                 return core.TestFlightEnabled;
             }
         }

@@ -9,6 +9,7 @@ using KSP.UI.Screens;
 using TestFlightCore.KSPPluginFramework;
 
 using TestFlightAPI;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -26,16 +27,17 @@ namespace TestFlightCore
 
         internal void Log(string message)
         {
-            if (TestFlightManagerScenario.Instance == null || TestFlightManagerScenario.Instance.userSettings == null)
-                return;
+           // if (TestFlightManagerScenario.Instance == null || TestFlightManagerScenario.Instance.userSettings == null)
+           //     return;
 
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightWindow: " + message;
             TestFlightUtil.Log(message, debug);
         }
 
         internal override void Start()
         {
+            Log("Start");
             Visible = false;
             tfScenario = null;
             StartCoroutine("ConnectToScenario");
@@ -64,8 +66,11 @@ namespace TestFlightCore
         internal void Startup()
         {
             tfScenario = TestFlightManagerScenario.Instance;
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
+            {
+                Log("SettingsEnabled == false");
                 return;
+            }
             
             tfScenario.userSettings.Load();
             tfManager = TestFlightManager.Instance;
@@ -137,16 +142,16 @@ namespace TestFlightCore
                 return;
             if (tfScenario == null)
                 return;
-            float windowWidth = 740f;
-            if (tfScenario.userSettings.shortenPartNameInMSD)
+            float windowWidth = 670f;
+            if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().shortenPartNameInMSD)
                 windowWidth -= 100f;
-            if (!tfScenario.userSettings.showFlightDataInMSD)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFlightDataInMSD)
                 windowWidth -= 75f;
-            if (!tfScenario.userSettings.showFailureRateInMSD)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFailureRateInMSD)
                 windowWidth -= 60f;
-            if (!tfScenario.userSettings.showMTBFStringInMSD)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showMTBFStringInMSD)
                 windowWidth -= 130f;
-            if (!tfScenario.userSettings.showStatusTextInMSD)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showStatusTextInMSD)
                 windowWidth -= 100f;
 
             float left = Screen.width - windowWidth;
@@ -240,9 +245,12 @@ namespace TestFlightCore
         }
         void HoverInButton()
         {
-            CalculateWindowBounds();
-            PrepareWindowState();
-            Visible = true;
+            if (!Visible)
+            {
+                CalculateWindowBounds();
+                PrepareWindowState();
+                Visible = true;
+            }
         }
         void HoverOutButton()
         {
@@ -260,31 +268,33 @@ namespace TestFlightCore
 
             base.RepeatingWorker();
         }
+
         internal override void DrawWindow(Int32 id)
         {
             if (tfManager == null)
                 return;
             
             Dictionary<Guid, MasterStatusItem> masterStatus = tfManager.GetMasterStatus();
+#if false
             GUIContent settingsButton = new GUIContent(TestFlight.Resources.btnChevronDown, "Open Settings Panel");
             if (tfScenario.userSettings.displaySettingsWindow)
             {
                 settingsButton.image = TestFlight.Resources.btnChevronUp;
                 settingsButton.tooltip = "Close Settings Panel";
             }
-
+#endif
             if (masterStatus == null)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("TestFlight is starting up...");
-                if (GUILayout.Button(settingsButton, GUILayout.Width(38)))
-                {
-                    tfScenario.userSettings.displaySettingsWindow = !tfScenario.userSettings.displaySettingsWindow;
-                    CalculateWindowBounds();
-                    tfScenario.userSettings.Save();
-                }
+                //if (GUILayout.Button(settingsButton, GUILayout.Width(38)))
+                //{
+                //    tfScenario.userSettings.displaySettingsWindow = !tfScenario.userSettings.displaySettingsWindow;
+                //    CalculateWindowBounds();
+                //    tfScenario.userSettings.Save();
+                //}
                 GUILayout.EndHorizontal();
             }
             else if (masterStatus.Count() <= 0)
@@ -293,12 +303,14 @@ namespace TestFlightCore
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("TestFlight is not currently tracking any vessels");
+#if false
                 if (GUILayout.Button(settingsButton, GUILayout.Width(38)))
                 {
                     tfScenario.userSettings.displaySettingsWindow = !tfScenario.userSettings.displaySettingsWindow;
                     CalculateWindowBounds();
                     tfScenario.userSettings.Save();
                 }
+#endif
                 GUILayout.EndHorizontal();
             }
             else
@@ -318,9 +330,9 @@ namespace TestFlightCore
                         //                    GUILayout.Label(String.Format("{0,7:F2}du", status.flightData));
                         //                    GUILayout.Label(String.Format("{0,7:F2}%", status.reliability));
 
-                        if (tfScenario.userSettings.showFailedPartsOnlyInMSD && status.failures == null)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFailedPartsOnlyInMSD && status.failures == null)
                             continue;
-                        if (tfScenario.userSettings.showFailedPartsOnlyInMSD && status.failures.Count <= 0)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFailedPartsOnlyInMSD && status.failures.Count <= 0)
                             continue;
 
                         GUILayout.BeginHorizontal();
@@ -336,31 +348,31 @@ namespace TestFlightCore
                                 tooltip += string.Format("<color=#{0}>{1}</color>\n", status.failures[i].GetFailureDetails().severity.ToLowerInvariant() == "major" ? "dc322fff" : "b58900ff", status.failures[i].GetFailureDetails().failureTitle);
                             }
                         }
-                        if (tfScenario.userSettings.shortenPartNameInMSD)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().shortenPartNameInMSD)
                             GUILayout.Label(new GUIContent(status.partName, tooltip), GUILayout.Width(100));
                         else
                             GUILayout.Label(new GUIContent(status.partName, tooltip), GUILayout.Width(200));
                         GUILayout.Space(10);
                         // Flight Data
-                        if (tfScenario.userSettings.showFlightDataInMSD)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFlightDataInMSD)
                         {
                             GUILayout.Label(String.Format("{0,-7:F2}<b>du</b>", status.flightData), GUILayout.Width(75));
                             GUILayout.Space(10);
                         }
                         // Resting Reliability
-                        if (tfScenario.userSettings.showMTBFStringInMSD)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showMTBFStringInMSD)
                         {
                             GUILayout.Label(String.Format("{0} <b>MTBF</b>", status.mtbfString), GUILayout.Width(130));
                             GUILayout.Space(10);
                         }
                         // Momentary Reliability
-                        if (tfScenario.userSettings.showFailureRateInMSD)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showFailureRateInMSD)
                         {
                             GUILayout.Label(String.Format("{0:F6}", status.momentaryFailureRate), GUILayout.Width(60));
                             GUILayout.Space(10);
                         }
                         // Part Status Text
-                        if (tfScenario.userSettings.showStatusTextInMSD)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams2>().showStatusTextInMSD)
                         {
                             if (status.failures == null || status.failures.Count <= 0)
                                 partDisplay = String.Format("<color=#859900ff>{0,-30}</color>", "OK");
@@ -381,16 +393,18 @@ namespace TestFlightCore
                         GUILayout.EndHorizontal();
                     }
                     GUILayout.EndScrollView();
-
+#if false
                     if (GUILayout.Button(settingsButton, GUILayout.Width(38)))
                     {
                         tfScenario.userSettings.displaySettingsWindow = !tfScenario.userSettings.displaySettingsWindow;
                         CalculateWindowBounds();
                         tfScenario.userSettings.Save();
                     }
+#endif
                 }
             }
-              
+
+#if false
             // Draw settings pane if opened
             if (tfScenario.userSettings.displaySettingsWindow)
             {
@@ -409,6 +423,7 @@ namespace TestFlightCore
                 switch (tfScenario.userSettings.settingsPage)
                 {
                     case 0:
+
                         GUILayout.BeginHorizontal();
                         if (DrawToggle(ref tfScenario.userSettings.showFailedPartsOnlyInMSD, "Show Failed Parts Only", Styles.styleToggle))
                         {
@@ -456,8 +471,9 @@ namespace TestFlightCore
                             CalculateWindowBounds();
                         }
                         GUILayout.EndHorizontal();
-
-                        GUILayout.BeginHorizontal();
+#endif
+            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
                         if (DrawToggle(ref tfScenario.userSettings.mainWindowLocked, "Lock MSD Position", Styles.styleToggle))
                         {
                             if (tfScenario.userSettings.mainWindowLocked)
@@ -506,7 +522,9 @@ namespace TestFlightCore
                             }
                         }
                         GUILayout.EndHorizontal();
+#if false
                         break;
+
                     case 1:
                         GUILayout.BeginHorizontal();
                         GUILayout.Label(new GUIContent("Flight Data Multiplier", "Overall difficulty slider.\n" +
@@ -565,10 +583,12 @@ namespace TestFlightCore
                         }
                         GUILayout.EndHorizontal();
                         break;
+
                 }
 
             }
-            GUILayout.Space(10);
+#endif
+                        GUILayout.Space(10);
             GUILayout.EndVertical();
             if (GUI.changed)
             {

@@ -252,11 +252,15 @@ namespace TestFlightCore.KSPPluginFramework
 
             if (WindowMoveEventsEnabled)
             {
+               
                 //Is the window in the same position?
                 if (WindowRect.x != WindowPosLast.x || WindowRect.y != WindowPosLast.y)
                 {
+                    Debug.Log("WindowMoveEventsEnabled == true, WindowMoveCompleteAfter: " + WindowMoveCompleteAfter.ToString());
+                    Debug.Log("WindowMoveDetectedAt: " + WindowMoveDetectedAt.ToString() + "  DateTime.Now: " + DateTime.Now.ToString());
                     if (!WindowMoveStarted)
                     {
+                        Debug.Log("Move detected");
                         //LogFormatted_DebugOnly("{0}-{1}", WindowRect, WindowPosLast);
                         WindowMoveStarted = true;
                         if (onWindowMoveStarted != null)
@@ -266,6 +270,12 @@ namespace TestFlightCore.KSPPluginFramework
                 }
                 if(WindowMoveStarted && WindowMoveDetectedAt.AddSeconds(WindowMoveCompleteAfter)<DateTime.Now)
                 {
+                    Debug.Log("Saving position");
+                    Debug.Log("count of events: " + onWindowMoveComplete.GetInvocationList().Length.ToString());
+                    foreach (WindowMoveHandler f in onWindowMoveComplete.GetInvocationList())
+                    {
+                        f(this);
+                    }
                     if (onWindowMoveComplete != null)
                         onWindowMoveComplete(this);
                     WindowMoveStarted = false;

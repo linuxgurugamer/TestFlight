@@ -509,7 +509,7 @@ namespace TestFlightAPI
             string configuration = (string)(part.Modules["ModuleEngineConfigs"].GetType().GetField("configuration").GetValue(part.Modules["ModuleEngineConfigs"]));
             return configuration.ToLower();
         }
-
+#if false
         public static void Log(string message, Part loggingPart)
         {
             return;
@@ -519,10 +519,12 @@ namespace TestFlightAPI
 //                debug = core.DebugEnabled;
 //            TestFlightUtil.Log(message, debug);
         }
-
+#endif
         public static void Log(string message, bool debug)
         {
+#if !DEBUG
             if (debug)
+#endif
                 Debug.Log("[TestFlight] " + message);
         }
 

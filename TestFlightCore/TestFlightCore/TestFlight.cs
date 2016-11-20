@@ -8,6 +8,7 @@ using System.Reflection;
 using UnityEngine;
 using TestFlightCore.KSPPluginFramework;
 using TestFlightAPI;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -16,10 +17,10 @@ namespace TestFlightCore
         internal string partName;
         internal uint partID;
         internal int partStatus;
-        internal double baseFailureRate;
+       // internal double baseFailureRate;
         internal double momentaryFailureRate;
         internal ITestFlightCore flightCore;
-        internal bool highlightPart;
+       // internal bool highlightPart;
         internal bool acknowledged;
         internal String mtbfString;
         internal double lastSeen;
@@ -207,24 +208,26 @@ namespace TestFlightCore
 
         internal void Log(string message)
         {
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightManager: " + message;
             TestFlightUtil.Log(message, debug);
         }
 
         internal override void Start()
         {
+            Log("Start()");
             base.Start();
             StartCoroutine("ConnectToScenario");
         }
 
         IEnumerator ConnectToScenario()
         {
+            Log("ConnectToScenario");
             while (TestFlightManagerScenario.Instance == null)
             {
                 yield return null;
             }
-
+            Log("Checking for scenario ready");
             tfScenario = TestFlightManagerScenario.Instance;
             while (!tfScenario.isReady)
             {
@@ -249,7 +252,7 @@ namespace TestFlightCore
 
         private void InitializeParts(Vessel vessel)
         {
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
             
             // Launch time is equal to current UT unless we have already cached this vessel's launch time
@@ -270,7 +273,7 @@ namespace TestFlightCore
                     if (core != null)
                     {
                         Log("TestFlightManager: Found core.  Getting part data");
-                        if (TestFlightManagerScenario.Instance.SettingsAlwaysMaxData)
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsAlwaysMaxData)
                         {
                             core.InitializeFlightData(core.GetMaximumData());
                         }
@@ -295,7 +298,7 @@ namespace TestFlightCore
             if (!isReady)
                 return;
 
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             // iterate through our cached vessels and delete ones that are no longer valid
@@ -366,7 +369,7 @@ namespace TestFlightCore
             if (!isReady)
                 return;
 
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
             
             // build a list of vessels to process based on setting
@@ -429,7 +432,7 @@ namespace TestFlightCore
             if (!isReady)
                 return;
 
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             if (masterStatus == null)
@@ -643,7 +646,7 @@ namespace TestFlightCore
 
         // New noscope
         public Dictionary<string, TestFlightPartData> partData = null;
-
+#if false
         public bool SettingsEnabled
         {
             get { return GetBool("settingsenabled", true); }
@@ -655,10 +658,10 @@ namespace TestFlightCore
             get { return GetBool("settingsalwaysmaxdata", false); }
             set { SetValue("settingsalwaysmaxdata", value); }
         }
-
+#endif
         internal void Log(string message)
         {
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightManagerScenario: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -868,7 +871,7 @@ namespace TestFlightCore
             }
         }
 
-        #region Assembly/Class Information
+#region Assembly/Class Information
         /// <summary>
         /// Name of the Assembly that is running this MonoBehaviour
         /// </summary>
@@ -887,13 +890,13 @@ namespace TestFlightCore
         internal static String _AssemblyFolder
         { get { return System.IO.Path.GetDirectoryName(_AssemblyLocation); } }
 
-        #endregion  
+#endregion
 
 
         public override void OnAwake()
         {
             Instance = this;
-
+            Debug.Log("Instance.OnAwake()");
             // v1.5.4 moved settings to PluginData but to avoid screwing over existing installs we want to migrate existing settings
             string pdSettingsFile = System.IO.Path.Combine(_AssemblyFolder, "PluginData/settings.cfg");
             string settingsFile = System.IO.Path.Combine(_AssemblyFolder, "../settings.cfg");

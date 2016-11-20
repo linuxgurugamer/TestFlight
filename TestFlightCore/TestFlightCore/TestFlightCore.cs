@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using TestFlightCore.KSPPluginFramework;
 using TestFlightAPI;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -87,7 +88,7 @@ namespace TestFlightCore
             {
                 if (TestFlightManagerScenario.Instance != null)
                 {
-                    if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+                    if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                         return false;
                 }
 
@@ -121,7 +122,7 @@ namespace TestFlightCore
             {
                 if (TestFlightManagerScenario.Instance != null)
                 {
-                    if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+                    if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                         return false;
                 }
                 return active;
@@ -164,11 +165,11 @@ namespace TestFlightCore
         {
             get 
             { 
-                return TestFlightManagerScenario.Instance != null ? TestFlightManagerScenario.Instance.userSettings.debugLog : false;
+                return HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             }
         }
 
-        [KSPEvent(guiActiveEditor=false, guiName = "R&D Window")]            
+        [KSPEvent(guiActiveEditor=true, guiName = "R&D Window")]            
         public void ToggleRNDGUI()
         {
             TestFlightEditorWindow.Instance.LockPart(this.part, Alias);
@@ -677,7 +678,7 @@ namespace TestFlightCore
             if (TestFlightManagerScenario.Instance == null)
                 return 1;
             
-            float globalFlightDataEngineerMultiplier = TestFlightManagerScenario.Instance.userSettings.flightDataEngineerMultiplier;
+            float globalFlightDataEngineerMultiplier = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().flightDataEngineerMultiplier;
 
             float totalEngineerBonus = 0;
             for (int i = 0, crewCount = crew.Count; i < crewCount; i++)
@@ -698,7 +699,7 @@ namespace TestFlightCore
             if (TestFlightManagerScenario.Instance == null)
                 return baseData;
 
-            return baseData * TestFlightManagerScenario.Instance.userSettings.flightDataMultiplier;
+            return baseData * HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().flightDataMultiplier;
         }
         public ITestFlightFailure TriggerFailure()
         {
@@ -897,7 +898,7 @@ namespace TestFlightCore
                 Profiler.BeginSample("Scenario check");
                 if (TestFlightManagerScenario.Instance == null)
                     return;
-                if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+                if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                     return;
                 Profiler.EndSample();
 

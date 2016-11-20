@@ -3,6 +3,7 @@ using TestFlightAPI;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -32,7 +33,7 @@ namespace TestFlightCore
 
         internal void Log(string message)
         {
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightRnDTeam: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -109,16 +110,16 @@ namespace TestFlightCore
         protected Dictionary<string, TestFlightRnDTeam>.Enumerator teamsEnumerator;
 
         [KSPField(isPersistant = true)]
-        protected double lastUpdateTime = 0f;
+        public double lastUpdateTime = 0f;
 
         // Config settings
-        public double updateFrequency = 86400d;
+        public double updateFrequency = 21600d;
         List<TestFlightRNDTeamSettings> teamSettings;
 
 
         internal void Log(string message)
         {
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightRnDScenario: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -161,7 +162,7 @@ namespace TestFlightCore
             }
             else
             {
-                updateFrequency = 86400d;
+                updateFrequency = 21600d;
                 TestFlightRNDTeamSettings team = new TestFlightRNDTeamSettings();
                 team.points = 100f;
                 team.costFactor = 1.0f;
@@ -186,7 +187,7 @@ namespace TestFlightCore
             if (TestFlightManagerScenario.Instance == null)
                 return;
 
-            if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
             
             double currentTime = Planetarium.GetUniversalTime();
@@ -286,7 +287,7 @@ namespace TestFlightCore
             if (TestFlightManagerScenario.Instance == null)
                 return;
 
-            if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             if (availableTeams == null)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Reflection;
 using System.Linq;
 using System.Collections;
@@ -9,6 +10,7 @@ using KSP.UI.Screens;
 using TestFlightCore.KSPPluginFramework;
 
 using TestFlightAPI;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -22,7 +24,7 @@ namespace TestFlightCore
         {
             if (TestFlightManagerScenario.Instance == null)
                 return;
-            if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             if (selectedPart == null)
@@ -38,7 +40,7 @@ namespace TestFlightCore
         {
             if (TestFlightManagerScenario.Instance == null)
                 return;
-            if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             if (EditorLogic.RootPart == null || EditorLogic.fetch.editorScreen != EditorScreen.Parts)
@@ -70,7 +72,7 @@ namespace TestFlightCore
         {
             if (TestFlightManagerScenario.Instance == null)
                 return;
-            if (!TestFlightManagerScenario.Instance.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
             if (selectedPart != null)
             {
@@ -134,7 +136,7 @@ namespace TestFlightCore
             if (TestFlightManagerScenario.Instance == null || TestFlightManagerScenario.Instance.userSettings == null)
                 return;
 
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightEditor: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -190,7 +192,7 @@ namespace TestFlightCore
 
         internal void Startup()
         {
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             Log("Startup");
@@ -299,7 +301,7 @@ namespace TestFlightCore
         }
         internal override void DrawWindow(int id)
         {
-            if (!tfScenario.SettingsEnabled)
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                 return;
 
             if (!isReady)
@@ -382,6 +384,9 @@ namespace TestFlightCore
                     else
                     {
                         Log("Part is already being researched.  Show button to stop");
+                        double currentTime = Planetarium.GetUniversalTime();
+                        int progressPercent = (int)(      100*(currentTime - TestFlightRnDScenario.Instance.lastUpdateTime) / TestFlightRnDScenario.Instance.updateFrequency);
+                        GUILayout.Label("Progress in current cycle: " + progressPercent.ToString() + "%");
                         if (GUILayout.Button("Stop Research", GUILayout.Width(200)))
                         {
                             tfRnDScenario.RemoveResearch(partName);

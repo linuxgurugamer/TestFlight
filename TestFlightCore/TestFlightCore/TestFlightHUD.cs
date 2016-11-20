@@ -11,6 +11,7 @@ using KSP.UI.Screens;
 
 
 using TestFlightAPI;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -22,14 +23,15 @@ namespace TestFlightCore
 
         internal override void Start()
         {
-            onWindowMoveComplete += Window_OnWindowMoveComplete;
+            Log("Start");
+           // onWindowMoveComplete += Window_OnWindowMoveComplete;
         }
 
         internal void Log(string message)
         {
-            if (TestFlightManagerScenario.Instance == null)
-                return;
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+           // if (TestFlightManagerScenario.Instance == null)
+           //     return;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightHUD: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -41,11 +43,13 @@ namespace TestFlightCore
             tfScenario = TestFlightManagerScenario.Instance;
             WindowMoveEventsEnabled = true;
             onWindowMoveComplete += Window_OnWindowMoveComplete;
+           
             return this;
         }
 
         internal void Shutdown()
         {
+            Log("TestFlightHud Shutdown()");
             Visible = false;
             onWindowMoveComplete -= Window_OnWindowMoveComplete;
             WindowMoveEventsEnabled = false;
@@ -53,13 +57,19 @@ namespace TestFlightCore
 
         internal override void Awake()
         {
+            Log("TestFlightHud Awake()");
             base.Awake();
         }
 
+        bool onceOnlyRun = false;
         internal override void OnGUIOnceOnly()
         {
+            Log("TestFlightHud OnGUIOnceOnly()");
+            onceOnlyRun = true;
             // Default position and size -- will get proper bounds calculated when needed
-            WindowRect = new Rect(tfScenario.userSettings.flightHUDPosition.xMin, tfScenario.userSettings.flightHUDPosition.yMin, 50f, 50f);
+            WindowRect = new Rect(tfScenario.userSettings.flightHUDPosition.xMin, tfScenario.userSettings.flightHUDPosition.yMin, 200f, 50f);
+           // WindowRect = new Rect(tfScenario.userSettings.flightHUDPosition);
+            Log("OnGUIOnceOnly, x: " + WindowRect.x.ToString() + "  y: " + WindowRect.y.ToString() + "  width: " + WindowRect.width.ToString() + "  height: " + WindowRect.height.ToString());
             DragEnabled = true;
             ClampToScreen = true;
             TooltipsEnabled = true;
@@ -68,19 +78,36 @@ namespace TestFlightCore
             WindowCaption = "";
             WindowStyle = SkinsLibrary.CurrentSkin.GetStyle("HUD");
             Visible = true;
-            onWindowMoveComplete += Window_OnWindowMoveComplete;
+           // onWindowMoveComplete += Window_OnWindowMoveComplete;
         }
 
         internal void CalculateWindowBounds()
         {
             Log("TestFlightHUD Calculating Window Bounds");
-            WindowRect = new Rect(tfScenario.userSettings.flightHUDPosition.xMin, tfScenario.userSettings.flightHUDPosition.yMin, 50f, 50f);
+            WindowRect = new Rect(WindowRect.xMin, WindowRect.yMin, 200f, 50f);
         }
+
+
+#if false
+        public void OnGUI()
+        {
+            if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
+                return;
+            if (!onceOnlyRun)
+                OnGUIOnceOnly();
+            WindowRect = GUILayout.Window(GetInstanceID(), WindowRect, DrawWindow, String.Empty, Styles.styleEditorPanel);
+        }
+#endif
 
         internal override void DrawWindow(Int32 id)
         {
+           
             Dictionary<Guid, MasterStatusItem> masterStatus = parentWindow.tfManager.GetMasterStatus();
-
+            if (masterStatus == null)
+                Log("masterStatus == null");
+            else
+               if (masterStatus.Count <= 0)
+                Log("masterStatus.Count: " + masterStatus.Count.ToString());
             if (masterStatus == null || masterStatus.Count <= 0)
                 return;
 
@@ -96,7 +123,9 @@ namespace TestFlightCore
             lastPartCount = masterStatus[currentVessl].allPartsStatus.Count;
 
             GUILayout.BeginVertical();
-
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Failed Parts", GUILayout.Width(200));
+            GUILayout.EndHorizontal();
             foreach (PartStatus status in masterStatus[currentVessl].allPartsStatus)
             {
                 // We only show failed parts in Flight HUD
@@ -123,12 +152,13 @@ namespace TestFlightCore
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
+            GUI.DragWindow();
         }
 
         // GUI EVent Handlers
         void Window_OnWindowMoveComplete(MonoBehaviourWindow sender)
         {
-            Log("TestFlightHUD Saving window position");
+            Debug.Log("TestFlightHUD Saving window position");
             tfScenario.userSettings.flightHUDPosition = WindowRect;
             tfScenario.userSettings.Save();
         }

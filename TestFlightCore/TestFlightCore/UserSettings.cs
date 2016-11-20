@@ -11,23 +11,23 @@ namespace TestFlightCore
         }
 
 
-        [Persistent] public bool debugLog = false;
+      //  [Persistent] public bool debugLog = false;
         [Persistent] public float minTimeBetweenDataPoll = 0.5f;
         [Persistent] public float minTimeBetweenFailurePoll = 60;
         [Persistent] public bool processAllVessels = false;
-        [Persistent] public float flightDataMultiplier = 1.0f;
-        [Persistent] public float flightDataEngineerMultiplier = 1.0f;
+     //   [Persistent] public float flightDataMultiplier = 1.0f;
+     //   [Persistent] public float flightDataEngineerMultiplier = 1.0f;
         [Persistent] public float globalReliabilityModifier = 1.0f;
         [Persistent] public float masterStatusUpdateFrequency = 0.25f;
         [Persistent] public bool displaySettingsWindow = false;
         [Persistent] public int settingsPage = 0;
         [Persistent] public bool enableHUD = false;
-        [Persistent] public bool showFailedPartsOnlyInMSD = false;
-        [Persistent] public bool showFlightDataInMSD = true;
-        [Persistent] public bool showMTBFStringInMSD = true;
-        [Persistent] public bool showFailureRateInMSD = false;
-        [Persistent] public bool showStatusTextInMSD = true;
-        [Persistent] public bool shortenPartNameInMSD = false;
+  //      [Persistent] public bool showFailedPartsOnlyInMSD = false;
+   //     [Persistent] public bool showFlightDataInMSD = true;
+   //     [Persistent] public bool showMTBFStringInMSD = true;
+     //   [Persistent] public bool showFailureRateInMSD = false;
+      //  [Persistent] public bool showStatusTextInMSD = true;
+     //   [Persistent] public bool shortenPartNameInMSD = false;
         [Persistent] public bool mainWindowLocked = true;
         [Persistent] public bool editorWindowLocked = true;
         [Persistent] public int currentMSDSize = 1;
@@ -35,7 +35,7 @@ namespace TestFlightCore
         [Persistent] public bool editorShowGraph = false;
         [Persistent] public bool editorShowOnDemand = true;
         [Persistent] public bool showMSD = false;
-        [Persistent] public bool singleScope = false;
+       // [Persistent] public bool singleScope = false;
 
         [Persistent] public bool enabled = true;
         [Persistent] public bool alwaysMaxData = true;
@@ -52,12 +52,13 @@ namespace TestFlightCore
         [Persistent] public PersistentVector2 currentEditorScrollPositionStored = new PersistentVector2();
         public Vector2 currentEditorScrollPosition = new Vector2(0,0);
         [Persistent] public PersistentRect flightHUDPositionStored = new PersistentRect();
-        public Rect flightHUDPosition = new Rect(100,50,0,0);
+        public Rect flightHUDPosition = new Rect(100,50,200,50);
         [Persistent] public PersistentRect editorWindowPositionStored = new PersistentRect();
         public Rect editorWindowPosition = new Rect(250,100,0,0);
 
         public override void OnDecodeFromConfigNode()
         {
+            Debug.Log("OnDecodeFromConfigNode");
             mainWindowPosition = mainWindowPositionStored.ToRect();
             editorWindowPosition = editorWindowPositionStored.ToRect();
             flightHUDPosition = flightHUDPositionStored.ToRect();
@@ -67,6 +68,7 @@ namespace TestFlightCore
 
         public override void OnEncodeToConfigNode()
         {
+            Debug.Log("OnEncodeToConfigNode");
             mainWindowPositionStored = mainWindowPositionStored.FromRect(mainWindowPosition);
             editorWindowPositionStored = editorWindowPositionStored.FromRect(editorWindowPosition);
             flightHUDPositionStored = flightHUDPositionStored.FromRect(flightHUDPosition);

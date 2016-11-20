@@ -1,0 +1,31 @@
+Fixed R&D window not showing up
+Added line to R&D while R&D is active, showing percentage of current R&D cycle
+Changed length of day from 86400 to 21600
+Rewrite Wheel code for new wheel classes, not sure if it's even being used
+Move all config options into the new System Settings, accessable from any screen
+
+TODO
+Need to look at R&D re. multiple R&D teams being active, at different times.  Right now, looks like all use the time tick of the first one started
+
+Following stock engines are not yet configured:
+ionEngine
+turboJet
+JetEngine
+turboFanSize2
+turboFanEngine
+smallRadialEngine
+liquidEngineMini
+toroidalAerospike
+microEngine
+radialEngineMini
+nuclearEngine
+SSME
+miniJetEngine
+omsEngine
+RAPIER
+Size2LFB
+Size3AdvancedEngine
+Size3EngineCluster
+sepMotor1
+vernierEngine
+

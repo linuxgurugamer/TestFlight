@@ -11,6 +11,7 @@ using TestFlightCore.KSPPluginFramework;
 
 using TestFlightAPI;
 using KSPAssets.Loaders;
+using TestFlight;
 
 namespace TestFlightCore
 {
@@ -21,19 +22,19 @@ namespace TestFlightCore
         internal TestFlightManagerScenario tfScenario = null;
         internal TestFlightRnDScenario tfRnDScenario = null;
         internal bool isReady = false;
-        private ApplicationLauncherButton appLauncherButton;
+        //ivate ApplicationLauncherButton appLauncherButton;
         bool stickyWindow = false;
         private DropDownList ddlSettingsPage = null;
 
-        bool assetBundleLoaded = false;
-        Canvas kscCanvas = null;
+      //  bool assetBundleLoaded = false;
+      //  Canvas kscCanvas = null;
 
         internal void Log(string message)
         {
             if (TestFlightManagerScenario.Instance == null || TestFlightManagerScenario.Instance.userSettings == null)
                 return;
 
-            bool debug = TestFlightManagerScenario.Instance.userSettings.debugLog;
+            bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
             message = "TestFlightKSCWindow: " + message;
             TestFlightUtil.Log(message, debug);
         }
@@ -43,10 +44,10 @@ namespace TestFlightCore
             Log("Initializing KSC Window Hook");
             Instance = this;
             // Load out AssetBundle
-            AssetLoader.LoadAssets(AssetLoaded, AssetLoader.GetAssetDefinitionWithName("TestFlight/testflight", "TFKSCCanvas"));
+            //AssetLoader.LoadAssets(AssetLoaded, AssetLoader.GetAssetDefinitionWithName("TestFlight/testflight", "TFKSCCanvas"));
             StartCoroutine("ConnectToScenario");
         }
-
+#if false
         void AssetLoaded(AssetLoader.Loader loader)
         {
             // You get a object that contains all the object that match your laoding request
@@ -61,6 +62,7 @@ namespace TestFlightCore
             }
             assetBundleLoaded = true;
         }
+#endif
 
         IEnumerator ConnectToScenario()
         {
@@ -101,7 +103,7 @@ namespace TestFlightCore
             TooltipMouseOffset = new Vector2d(10, 10);
             TooltipStatic = true;
             WindowCaption = "";
-            StartCoroutine("AddToToolbar");
+//            StartCoroutine("AddToToolbar");
             TestFlight.Resources.LoadTextures();
             List<string> views = new List<string>()
             {
@@ -119,8 +121,8 @@ namespace TestFlightCore
         internal void CalculateWindowBounds()
         {
             Log("CalculateWindowBounds PreCheck");
-            if (appLauncherButton == null)
-                return;
+            // (appLauncherButton == null)
+            //  return;
             if (tfScenario == null)
                 return;
 
@@ -131,7 +133,7 @@ namespace TestFlightCore
             float top = 40f;
             WindowRect = new Rect(left, top, windowWidth, windowHeight);
         }
-
+#if false
         IEnumerator AddToToolbar()
         {
             while (!ApplicationLauncher.Ready)
@@ -167,6 +169,7 @@ namespace TestFlightCore
                 throw e;
             }
         }
+#endif
         void OpenWindow()
         {
             Log("Open Window");
@@ -182,7 +185,7 @@ namespace TestFlightCore
         }
         void HideButton()
         {
-            ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+           // ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
         }
         void RepostionWindow()
         {
@@ -223,7 +226,7 @@ namespace TestFlightCore
                 case 0:
                     GUILayout.Label("Research & Development");
                     List<string> partsInResearch = tfRnDScenario.GetPartsInResearch();
-                    if (!tfScenario.SettingsEnabled)
+                    if (!HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().SettingsEnabled)
                         GUILayout.Label("R&D is not available because TestFlight is disabled in this save.\nYou can enable it from the settings tab.");
                     else if (partsInResearch == null || partsInResearch.Count == 0)
                         GUILayout.Label("Here you can manage engineering teams working on your hardware.\nYou can start new research programs from the VAB.");
@@ -257,6 +260,7 @@ namespace TestFlightCore
                         GUILayout.EndVertical();
                     }
                     break;
+#if false
                 case 1:
                     if (ddlSettingsPage == null)
                     {
@@ -334,7 +338,9 @@ namespace TestFlightCore
                             break;
                     }
                     break;
+#endif
             }
+
             GUILayout.EndVertical();
 
         }
