@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-#if false
 namespace TestFlight.Failure_Modules
 {
     public class TestFlightFailure_WheelMotor : TestFlightFailureBase_Wheel
     {
         private bool state;
+
         public override void DoFailure()
         {
             base.DoFailure();
-            this.state = base.module.motorEnabled;
-            base.module.motorEnabled = false;
-            base.module.Events["EnableMotor"].active = false;
-            base.module.Events["DisableMotor"].active = false;
-
+            this.state = base.wheelMotor.motorEnabled; // current state (disabled/enabled)
+            base.wheelMotor.motorEnabled = false; // disable motor
+            base.wheelMotor.enabled = false; // Break module
+            base.wheelMotor.Fields["motorEnabled"].guiActive = false; // Hide UI button)
+            // Despite best efforts "burned" motor still provides uncontrollable throttle :(
         }
+
         public override float DoRepair()
         {
             base.DoRepair();
-            base.module.motorEnabled = state;
-            base.module.Events["EnableMotor"].active = state;
-            base.module.Events["DisableMotor"].active = !state;
+            base.wheelMotor.motorEnabled = state; 
+            base.wheelMotor.enabled = true;
+            base.wheelMotor.Fields["motorEnabled"].guiActive = true;
             return 0f;
         }
     }
 }
-#endif

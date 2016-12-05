@@ -3,28 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-#if false
 namespace TestFlight.Failure_Modules
 {
     public class TestFlightFailure_WheelSteer : TestFlightFailureBase_Wheel
     {
         private bool state;
+
         public override void DoFailure()
         {
             base.DoFailure();
-            this.state = base.module.steeringLocked;
-            base.module.steeringLocked = true;
-            base.module.Events["LockSteering"].active = false;
-            base.module.Events["UnlockSteering"].active = false;
+            this.state = base.wheelSteering.enabled;
+            // It seems to me it is enough to break steering, GUI can't change its value anymore
+            // In case if you need it is KSPField, not action or event. (same is true for motors)
+            base.wheelSteering.enabled = false;
         }
+
         public override float DoRepair()
         {
             base.DoRepair();
-            base.module.steeringLocked = this.state;
-            base.module.Events["LockSteering"].active = !this.state;
-            base.module.Events["UnlockSteering"].active = this.state;
+            base.wheelSteering.enabled = true;
             return 0f;
         }
     }
 }
-#endif
