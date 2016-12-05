@@ -217,3 +217,7 @@ $RECYCLE.BIN/
 TestFlight.userprefs
 
 *.userprefs
+
+*.zip
+*.swp
+*.dll

@@ -777,6 +777,7 @@ namespace TestFlightCore
         {
             return TriggerNamedFailure(failureModuleName, false);
         }
+
         public ITestFlightFailure TriggerNamedFailure(String failureModuleName, bool fallbackToRandom)
         {
             failureModuleName = failureModuleName.ToLower().Trim();

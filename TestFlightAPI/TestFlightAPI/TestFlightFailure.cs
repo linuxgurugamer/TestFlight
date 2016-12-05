@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace TestFlightAPI
 {
     /// <summary>
@@ -29,6 +30,13 @@ namespace TestFlightAPI
         [KSPField(isPersistant=true)]
         public bool failed;
 
+
+        [KSPEvent(active = true, guiActive = true)]
+        public void Fail()
+        {
+            ITestFlightCore core = TestFlightUtil.GetCore(this.part, Configuration);
+            core.TriggerNamedFailure(this.moduleName, false);
+        }
 
         public bool Failed
         {
@@ -90,6 +98,7 @@ namespace TestFlightAPI
         {
             Failed = true;
             ITestFlightCore core = TestFlightUtil.GetCore(this.part, Configuration);
+           
             if (core != null)
             {
                 core.ModifyFlightData(duFail, true);
@@ -130,6 +139,8 @@ namespace TestFlightAPI
         
         public override void OnStart(StartState state)
         {
+            ITestFlightCore core = TestFlightUtil.GetCore(this.part, Configuration);
+            this.Events["Fail"].guiName = "Fail: " + failureTitle;
         }
         
         public override void OnLoad(ConfigNode node)

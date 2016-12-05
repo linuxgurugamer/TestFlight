@@ -29,3 +29,5 @@ Size3EngineCluster
 sepMotor1
 vernierEngine
 
+Added manual failure button
+Updated AblatorCover todo continous loss of ablator

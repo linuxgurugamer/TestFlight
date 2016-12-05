@@ -204,8 +204,6 @@ namespace TestFlightCore
         double lastMasterStatusUpdate = 0.0f;
 
 
-
-
         internal void Log(string message)
         {
             bool debug = HighLogic.CurrentGame.Parameters.CustomParams<TestFlightCustomParams1>().debugLog;
