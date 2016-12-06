@@ -14,9 +14,7 @@ namespace TestFlight.Failure_Modules
             base.DoFailure();
             this.state = base.wheelMotor.motorEnabled; // current state (disabled/enabled)
             base.wheelMotor.motorEnabled = false; // disable motor
-            base.wheelMotor.enabled = false; // Break module
             base.wheelMotor.Fields["motorEnabled"].guiActive = false; // Hide UI button)
-            // Despite best efforts "burned" motor still provides uncontrollable throttle :(
         }
 
         public override float DoRepair()
