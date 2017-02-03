@@ -8,6 +8,9 @@ set ZIP="c:\Program Files\7-zip\7z.exe"
 
 
 set VERSIONFILE=TestFlightContinued.version
+
+copy %VERSIONFILE% GameData\TestFlight
+
 rem The following requires the JQ program, available here: https://stedolan.github.io/jq/download/
 c:\local\jq-win64  ".VERSION.MAJOR" %VERSIONFILE% >tmpfile
 set /P major=<tmpfile
@@ -24,13 +27,8 @@ del tmpfile
 set VERSION=%major%.%minor%.%patch%
 if "%build%" NEQ "0"  set VERSION=%VERSION%.%build%
 
-type JanitorsCloset.version
 
 echo Version:  %VERSION%
-pause
-rem set /p newVERSION= "Enter version: "
-rem if "%newVERSION" NEQ "" set VERSION=%newVERSION%
-
 
 set FILE="%RELEASEDIR%\TestFlight-%VERSION%.zip"
 IF EXIST %FILE% del /F %FILE%
