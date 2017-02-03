@@ -11,6 +11,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlightCore", "TestFlightCore\TestFlightCore\TestFlightCore.csproj", "{CD4D0CF1-16A8-4FB9-A7CC-6566160B8CD2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F212E235-8856-4C7E-AFA9-051490E1350F} = {F212E235-8856-4C7E-AFA9-051490E1350F}
+		{411F2FC2-8E31-4FDB-9F69-E202E7B4081A} = {411F2FC2-8E31-4FDB-9F69-E202E7B4081A}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFlightAPI", "TestFlightAPI\TestFlightAPI\TestFlightAPI.csproj", "{F212E235-8856-4C7E-AFA9-051490E1350F}"
@@ -23,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{49D5289B-0BD3-458D-801B-803F6E1DDCAE}"
 	ProjectSection(SolutionItems) = preProject
 		Changelog.txt = Changelog.txt
+		TestFlightContinued.version = TestFlightContinued.version
 	EndProjectSection
 EndProject
 Global

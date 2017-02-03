@@ -31,3 +31,13 @@ vernierEngine
 
 Added manual failure button
 Updated AblatorCover todo continous loss of ablator
+
+
+Added by Stasikos
+
+Brakes breaking
+Both types of steering breaking (in different ways, because they are very different by nature)
+Motors burning
+Still not ideal. Staging dependency looks silly for rovers without staging (so you can't get data without having a decoupler on rover).
+Example config is not included.
+Repairing is not tested just because can't invoke repairs in any way.
