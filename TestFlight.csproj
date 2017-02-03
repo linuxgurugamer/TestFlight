@@ -156,6 +156,10 @@
       <HintPath>R:\KSP_1.2.2_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="buildRelease.bat" />
+    <None Include="deploy.bat" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -181,8 +185,13 @@
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)$(TargetName).dll"    "$(SolutionDir)GameData\TestFlight\Plugins\"
 
-copy /Y "$(TargetDir)$(TargetName).pdb"    "$(SolutionDir)GameData\TestFlight\Plugins\"
-</PostBuildEvent>
+rem copy /Y "$(TargetDir)$(TargetName).pdb"    "$(SolutionDir)GameData\TestFlight\Plugins\"
+
+start /D D:\Users\jbb\github\TestFlight  /WAIT deploy.bat
+
+ if $(ConfigurationName) == Release (
+start /D D:\Users\jbb\github\TestFlight /WAIT buildRelease.bat
+)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
